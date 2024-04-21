@@ -1,0 +1,34 @@
+# Catalog settings
+[catalog.kline]
+path = "D:\\kline.db"
+
+# Vendor settings
+[vendor.binance]
+api_key = "abc123"
+api_secret = "abc123"
+http_proxy = "http://127.0.0.1:7890"  # okay to remove if not in a restricted network of binance
+https_proxy = "http://127.0.0.1:7890"  # same as above
+
+# Logging settings
+[logging]
+version = 1
+disable_existing_loggers = false
+
+[logging.formatters]
+simple = { format = "%(asctime)s [%(levelname)s] %(name)s <%(filename)s:%(lineno)d>: %(message)s", datefmt = "%Y-%m-%d %H:%M:%S" }
+
+[logging.handlers]
+console = { class = "logging.StreamHandler", level = "DEBUG", formatter = "simple", stream = "ext://sys.stdout" }
+file = { class = "logging.handlers.TimedRotatingFileHandler", level = "INFO", formatter = "simple", filename = "dbmaster.log", when = "midnight", encoding = "utf8" }
+
+[logging.loggers]
+dbmaster = { level = "INFO", handlers = [
+    "console",
+    "file",
+], propagate = false }
+binance = { level = "INFO", handlers = ["console"], propagate = false }
+urllib3 = { level = "INFO", handlers = ["console"], propagate = false }
+
+[logging.root]
+level = "DEBUG"
+handlers = ["console"]

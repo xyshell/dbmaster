@@ -1,0 +1,78 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dbmaster"
+version = "0.1.0"
+description = "Personal Quant Research Database Manager"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+keywords = ["quant research", "personal database"]
+authors = [{ name = "You Xie", email = "xyshell@bu.edu" }]
+maintainers = [{ name = "You Xie", email = "xyshell@bu.edu" }]
+classifiers = [
+    # How mature is this project? Common values are
+    #   3 - Alpha
+    #   4 - Beta
+    #   5 - Production/Stable
+    "Development Status :: 4 - Beta",
+
+    # Indicate who your project is intended for
+    "Intended Audience :: Developers",
+
+    # Topics
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Office/Business :: Financial :: Investment",
+
+    # Pick your license as you wish
+    "License :: OSI Approved :: MIT License",
+
+    # Specify the Python versions you support here. In particular, ensure
+    # that you indicate you support Python 3. These classifiers are *not*
+    # checked by "pip install". See instead "requires-python" key in this file.
+    "Programming Language :: Python :: 3.12",
+
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "numpy>=1.26, <2.0",
+    "pandas>=2.2, <3.0",
+    "pydantic>=2.7, <3.0",
+    "pydantic-settings>=2.2, <3.0",
+    "SQLAlchemy>=2.0, <3.0",
+    "fire>=0.6.0, <1.0",
+    "retry>=0.9.2, <1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.1", "ruff>=0.4", "build>=1.2"]
+binance = ["python-binance>=1.0.19, <2.0"]
+
+[project.urls]
+"Homepage" = "https://github.com/xyshell/dbmaster"
+
+[project.scripts]
+dbmaster = "dbmaster.__main__:Main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+log_cli = true
+log_file_level = "WARNING"
+log_format = "%(asctime)s [%(levelname)s] %(name)s <%(filename)s:%(lineno)d>: %(message)s"
+log_date_format = "%Y-%m-%d %H:%M:%S"
+
+[tool.ruff]
+line-length = 120
+output-format = "full"
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F403"] # `import *` used; unable to detect undefined names
