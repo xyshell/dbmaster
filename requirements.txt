@@ -1,6 +1,6 @@
 numpy==1.26.0
 pandas==2.2.2
-pydantic==2.7.0
+pydantic==2.7.1
 pydantic-settings==2.2.1
 SQLAlchemy==2.0.21
 fire==0.6.0
