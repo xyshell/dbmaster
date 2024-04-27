@@ -1,6 +1,6 @@
 import abc
 import functools
-from typing import Sequence
+from typing import Any, Sequence
 
 import pandas as pd
 import sqlalchemy as sa
@@ -36,7 +36,7 @@ class CatalogBase(abc.ABC):
 
     @classmethod
     @abc.abstractmethod
-    def set(cls, df: pd.DataFrame) -> bool:
+    def set(cls, df: pd.DataFrame, **kwargs) -> Any:
         pass
 
     @classmethod

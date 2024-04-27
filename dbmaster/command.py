@@ -41,7 +41,7 @@ class Update:
         def task(symbol, freq=freq, datefrom=datefrom, dateto=dateto, kwargs=kwargs):
             data = vendor_hanlder(symbol=symbol, freq=freq, datefrom=datefrom, dateto=dateto, **kwargs)
             with lock:
-                return catalog_cls.set(symbol=symbol, freq=freq, df=data, **kwargs)
+                return catalog_cls.set(data, symbol=symbol, freq=freq, **kwargs)
 
         with ThreadPoolExecutor(max_workers=config.MAX_WORKERS) as executor:
             futures = []

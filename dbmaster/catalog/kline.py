@@ -72,9 +72,9 @@ class KlineBinance(CatalogBase):
     @retry(sa.exc.OperationalError, tries=3, logger=logger)
     def set(
         cls,
+        df: pd.DataFrame,
         symbol: BinanceSymbolType,
         freq: BinanceFreqType,
-        df: pd.DataFrame,
         if_row_exists: IfRowExistsType = IfRowExistsType.INSERT,
         **kwargs,
     ) -> None:
