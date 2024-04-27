@@ -17,7 +17,7 @@ for %%f in (%freq%) do (
     echo Running job for freq=%%f, symbol=%symbol%
     echo -------------------------------------------------------------------------------------------------
     @REM turn off concurrent fetching for large amount of data
-    if %%f=1m (
+    if %%f==1m (
         set DBMASTER_MAX_WORKERS=1  
     )
     python -m dbmaster update kline --vendor=binance --freq=%%f  --datefrom=%datefrom% --symbol=%symbol% --if_row_exists=insert
