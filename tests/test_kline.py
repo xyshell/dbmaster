@@ -1,8 +1,8 @@
-from dbmaster.catalog import Kline
+from dbmaster.catalog import KlineBinance
 
 
 def test_get():
-    df = Kline.get("BTCUSDT", "1d", datefrom="2024-01-01")
+    df = KlineBinance.get("BTCUSDT", "1d", datefrom="2024-01-01")
     print(df.head(5))
     #     Symbol   OpenTime           CloseTime  ...     Close   BaseVolume   QuoteVolume
     # 0  BTCUSDT 2024-01-01 2024-01-01 23:59:59  ...  44179.55  27174.29903  1.169996e+09
@@ -14,7 +14,7 @@ def test_get():
 
 
 def test_get_subset_column():
-    df = Kline.get("BTCUSDT", "1d", datefrom="2024-01-01", column=["Symbol", "OpenTime", "Close"])
+    df = KlineBinance.get("BTCUSDT", "1d", datefrom="2024-01-01", column=["Symbol", "OpenTime", "Close"])
     print(df.head(5))
     #           Symbol   OpenTime     Close
     # 0    BTCUSDT 2024-01-01  44179.55

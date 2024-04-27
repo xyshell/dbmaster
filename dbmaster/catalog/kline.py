@@ -57,7 +57,7 @@ class KlineBinance(CatalogBase):
         dateto: DateTimeType | None = None,
         column: str | list[str] = None,
     ) -> pd.DataFrame:
-        table = cls.get_table(cls._get_kline_table(freq))
+        table = cls.get_table(f"kline_binance_{freq}")
 
         column = to_list(column) or [col.name for col in table.columns]
         sql = sa.select(*[table.c[col] for col in column])
