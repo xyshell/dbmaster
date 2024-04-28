@@ -3,6 +3,7 @@ config.toml
 temp*
 *.log.*
 job/
+dbmaster/_version.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
