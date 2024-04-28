@@ -1,6 +1,6 @@
 import functools
 from collections import defaultdict
-from typing import Optional
+from typing import Sequence
 import logging
 
 import pandas as pd
@@ -38,7 +38,7 @@ class Binance(KlineVendorBase):
     @classmethod
     @property
     @functools.cache
-    def universe(cls) -> tuple[BinanceSymbolType, ...]:
+    def universe(cls) -> Sequence[BinanceSymbolType]:
         all_usdt_symbols = [
             symbol["symbol"]
             for symbol in cls.client.get_exchange_info()["symbols"]
@@ -55,8 +55,8 @@ class Binance(KlineVendorBase):
         cls,
         symbol: BinanceSymbolType,
         freq: BinanceFreqType,
-        datefrom: Optional[DateTimeType] = None,
-        dateto: Optional[DateTimeType] = None,
+        datefrom: DateTimeType | None = None,
+        dateto: DateTimeType | None = None,
         closed_only: bool = True,
         klines_type: str | HistoricalKlinesType = HistoricalKlinesType.SPOT,
         **kwargs,
@@ -65,8 +65,8 @@ class Binance(KlineVendorBase):
         Args:
             symbol (str): Symbol name e.g. BTC/USDT.
             freq (str): Kline interval e.g. 1m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 8h, 12h, 1d, 3d, 1w, 1M.
-            datefrom (Optional[DateTimeType]): Date from. Defaults to None.
-            dateto (Optional[DateTimeType]): Date to. Defaults to None.
+            datefrom (DateTimeType | None): Date from. Defaults to None.
+            dateto (DateTimeType | None): Date to. Defaults to None.
             closed_only (bool): If True, only closed klines will be returned.
             klines_type (str | HistoricalKlinesType): Defaults to HistoricalKlinesType.SPOT
                 SPOT = 1; FUTURES = 2; FUTURES_COIN = 3

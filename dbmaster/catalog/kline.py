@@ -1,3 +1,7 @@
+"""
+Kline catalog implementation
+"""
+
 import logging
 import time
 from typing import Sequence
@@ -8,6 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy import Column, DateTime, Float, String
 
 from dbmaster import config
+from dbmaster.catalog.base import CatalogBase
 from dbmaster.util import (
     validate,
     to_list,
@@ -17,7 +22,6 @@ from dbmaster.util import (
     BINANCE_KLINE_FREQ,
     IfRowExistsType,
 )
-from dbmaster.catalog.base import CatalogBase
 
 logger = logging.getLogger(__name__)
 
@@ -44,8 +48,9 @@ class KlineBinance(CatalogBase):
     ]
 
     @classmethod
-    def __initialize__(cls, engine=engine) -> None:
+    def __initialize__(cls, engine=engine, metadata=metadata) -> None:
         cls.engine = engine
+        cls.metadata = metadata
 
     @classmethod
     @validate
@@ -55,7 +60,7 @@ class KlineBinance(CatalogBase):
         freq: BinanceFreqType,
         datefrom: DateTimeType | None = None,
         dateto: DateTimeType | None = None,
-        column: str | list[str] = None,
+        column: str | list[str] | None = None,
     ) -> pd.DataFrame:
         table = cls.get_table(f"kline_binance_{freq}")
 
@@ -78,7 +83,7 @@ class KlineBinance(CatalogBase):
         if_row_exists: IfRowExistsType = IfRowExistsType.INSERT,
         **kwargs,
     ) -> None:
-        logger.debug(f"KlineBinance.set({symbol=}, {freq=}, {df.shape=}, {if_row_exists=})")
+        logger.debug(f"{cls.__name__}.set({symbol=}, {freq=}, {df.shape=}, {if_row_exists=})")
         table_name = f"kline_binance_{freq}"
         try:
             res = df.to_sql(table_name, con=engine, if_exists="append", index=False)
@@ -108,6 +113,8 @@ class KlineBinance(CatalogBase):
                     conn.commit()
                 res_inc = df.to_sql(table_name, con=engine, if_exists="append", index=False)
                 logger.info(f"Dropped {res_del.rowcount} rows from {table_name}, before inserting {res_inc} rows.")
+            else:
+                raise ValueError(f"Invalid {if_row_exists=}.")
         except sa.exc.OperationalError as e:
             time.sleep(5)
             raise Exception(str(e)[:80] + " ...") from e
@@ -115,4 +122,24 @@ class KlineBinance(CatalogBase):
             logger.info(f"Inserted {res} rows to {table_name}.")
 
 
-__all__ = ["KlineBinance"]
+class Kline:
+    @classmethod
+    @validate
+    def get(
+        cls,
+        vendor: str,
+        *,
+        symbol: str | Sequence[str],
+        freq: str,
+        datefrom: DateTimeType | None = None,
+        dateto: DateTimeType | None = None,
+        column: str | list[str] | None = None,
+    ) -> pd.DataFrame:
+        if vendor == "binance":
+            df = KlineBinance.get(symbol=symbol, freq=freq, datefrom=datefrom, dateto=dateto, column=column)
+        else:
+            raise NotImplementedError(f"{vendor} is not implemented")
+        return df
+
+
+__all__ = ["Kline"]

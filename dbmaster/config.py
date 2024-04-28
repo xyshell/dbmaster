@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Sequence, Tuple, Type
+from typing import Sequence, Tuple, Type
 from pathlib import Path
 
 from pydantic import BaseModel, AfterValidator
@@ -12,27 +12,27 @@ def _check_path(path: str) -> str:
     return path
 
 
-class CatalogTypeConfig(BaseModel):
-    path: str
-
-
-class KlineCatalogTypeConfig(CatalogTypeConfig):
+class DatasetConfig(BaseModel):
     path: str = AfterValidator(_check_path)
 
 
 class CatalogConfig(BaseModel):
-    kline: KlineCatalogTypeConfig
+    kline: DatasetConfig
+
+
+class DerivedConfig(BaseModel):
+    pmom: DatasetConfig
 
 
 class BinanceConfig(BaseModel):
     api_key: str
     api_secret: str
-    http_proxy: Optional[str] = None
-    https_proxy: Optional[str] = None
+    http_proxy: str | None = None
+    https_proxy: str | None = None
 
 
 class VendorConfig(BaseModel):
-    binance: Optional[BinanceConfig]
+    binance: BinanceConfig | None
 
 
 class LoggingConfig(BaseModel):
@@ -47,6 +47,7 @@ class LoggingConfig(BaseModel):
 
 class Config(BaseSettings):
     catalog: CatalogConfig
+    derived: DerivedConfig
     vendor: VendorConfig
     logging: LoggingConfig
 
