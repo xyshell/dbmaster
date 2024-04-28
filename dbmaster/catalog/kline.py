@@ -85,6 +85,8 @@ class KlineBinance(CatalogBase):
     ) -> None:
         logger.debug(f"{cls.__name__}.set({symbol=}, {freq=}, {df.shape=}, {if_row_exists=})")
         table_name = f"kline_binance_{freq}"
+        if df.empty:
+            return
         try:
             res = df.to_sql(table_name, con=engine, if_exists="append", index=False)
         except sa.exc.IntegrityError as e:

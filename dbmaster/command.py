@@ -112,5 +112,4 @@ class Compute:
                 futures.append(future)
 
             res = [future.result() for future in futures]
-
-        return res
+        print(f"Done. Returned: {res}")

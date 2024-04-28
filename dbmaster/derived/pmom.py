@@ -13,15 +13,7 @@ from sqlalchemy import Column, DateTime, Float, String
 
 from dbmaster import config
 from dbmaster.derived.base import DerivedBase
-from dbmaster.util import (
-    BinanceFreqType,
-    BinanceCurrencyType,
-    PeriodType,
-    validate,
-    DateTimeType,
-    IfRowExistsType,
-    to_list,
-)
+from dbmaster.util import BinanceCurrencyType, PeriodType, validate, DateTimeType, IfRowExistsType, to_list
 
 
 logger = logging.getLogger(__name__)
@@ -153,6 +145,8 @@ class PmomBinance(DerivedBase):
     def set(cls, df: pd.DataFrame, if_row_exists: IfRowExistsType = IfRowExistsType.INSERT, **kwargs) -> None:
         logger.debug(f"{cls.__name__}.set({df.shape=}, {if_row_exists=})")
         table_name = "pmom_binance"
+        if df.empty:
+            return
         try:
             res = df.to_sql(table_name, con=engine, if_exists="append", index=False)
         except sa.exc.IntegrityError as e:
@@ -169,9 +163,9 @@ class PmomBinance(DerivedBase):
                 existed = pd.read_sql(sql, con=engine)
                 existed["existed"] = True
 
-                df = df.merge(existed, how="left", on=["Timestamp", "Symbol", "Period"])
-                df = df[df["existed"].isna()].drop(columns="existed")
-                res = df.to_sql(table_name, con=engine, if_exists="append", index=False)
+                insert = df.merge(existed, how="left", on=["Timestamp", "Symbol", "Period"])
+                insert = insert[insert["existed"].isna()].drop(columns="existed")
+                res = insert.to_sql(table_name, con=engine, if_exists="append", index=False)
                 logger.info(f"Inserted {res} rows to {table_name}. Timestamp={df["Timestamp"].iloc[0]}")
             elif if_row_exists is IfRowExistsType.DROP:
                 table = cls.get_table(table_name)
