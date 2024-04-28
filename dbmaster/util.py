@@ -47,6 +47,15 @@ def _check_binance_symbol(symbol: str):
     return symbol.upper()
 
 
+def _check_binance_currency(currency: str):
+    if currency.endswith("USDT") and "/" not in currency:
+        currency = currency.replace("USDT", "/USDT")
+    elif currency.endswith("BTC") and "/" not in currency:
+        currency = currency.replace("BTC", "/BTC")
+    assert "/" in currency and len(currency.split("/")) == 2, f"Invalid {currency=}"
+    return currency
+
+
 class VendorPurposeType(Enum):
     RAW = "raw"
     Catalog = "catalog"
@@ -72,23 +81,19 @@ def _check_date(date: str | dt.date | dt.datetime | pd.Timestamp | None):
     return pd.to_datetime(date).normalize()
 
 
-def _check_vendor(vendor: str | type):
-    from dbmaster.vendor import VendorBase
-
-    if isinstance(vendor, str):
-        vendor_cls = next(cls for cls in get_subclasses(VendorBase) if cls.name == vendor)
-    elif isinstance(vendor, type) and isinstance(vendor, VendorBase):
-        vendor_cls = vendor
-    else:
-        raise ValueError(f"Invalid vendor type: {type(vendor)=}")
-    return vendor_cls
+def _check_period(period: str):
+    if not period.startswith("-") and not period.startswith("+"):
+        period = f"+{period}"
+    assert period.startswith("+") or period.startswith("-"), "period must start with + or -"
+    return period
 
 
 BinanceSymbolType = Annotated[str, AfterValidator(_check_binance_symbol)]
+BinanceCurrencyType = Annotated[str, AfterValidator(_check_binance_currency)]
 BinanceFreqType = Annotated[str, AfterValidator(_check_binance_freq)]
 DateTimeType = Annotated[str | dt.date | dt.datetime | pd.Timestamp | None, AfterValidator(_check_datetime)]
 DateType = Annotated[str | dt.date | dt.datetime | pd.Timestamp | None, AfterValidator(_check_date)]
-VendorType = Annotated[str | type, AfterValidator(_check_vendor)]
+PeriodType = Annotated[str, AfterValidator(_check_period)]
 
 
 class DatasetBase(abc.ABC):

@@ -142,4 +142,4 @@ class Kline:
         return df
 
 
-__all__ = ["Kline"]
+__all__ = ["Kline", "KlineBinance"]

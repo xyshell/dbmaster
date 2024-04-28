@@ -13,7 +13,15 @@ from sqlalchemy import Column, DateTime, Float, String
 
 from dbmaster import config
 from dbmaster.derived.base import DerivedBase
-from dbmaster.util import validate, DateTimeType, IfRowExistsType, to_list
+from dbmaster.util import (
+    BinanceFreqType,
+    BinanceCurrencyType,
+    PeriodType,
+    validate,
+    DateTimeType,
+    IfRowExistsType,
+    to_list,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -120,25 +128,24 @@ class PmomBinance(DerivedBase):
         cls.engine = engine
         cls.metadata = metadata
 
-    # @classmethod
-    # @validate
-    # def get(
-    #     cls,
-    #     symbol: BinanceSymbolType | Sequence[BinanceSymbolType],
-    #     freq: BinanceFreqType,
-    #     datefrom: DateTimeType | None = None,
-    #     dateto: DateTimeType | None = None,
-    #     column: str | list[str] = None,
-    # ) -> pd.DataFrame:
-    #     table = cls.get_table(f"kline_binance_{freq}")
+    @classmethod
+    @validate
+    def get(
+        cls,
+        symbol: BinanceCurrencyType | Sequence[BinanceCurrencyType] | None = None,
+        period: PeriodType | Sequence[PeriodType] | None = None,
+        datefrom: DateTimeType | None = None,
+        dateto: DateTimeType | None = None,
+    ) -> pd.DataFrame:
+        table = cls.get_table("pmom_binance")
 
-    #     column = to_list(column) or [col.name for col in table.columns]
-    #     sql = sa.select(*[table.c[col] for col in column])
-    #     sql = sql.where(table.c.Symbol.in_(to_list(symbol))) if symbol else sql
-    #     sql = sql.where(table.c.OpenTime >= datefrom.to_pydatetime()) if datefrom else sql
-    #     sql = sql.where(table.c.OpenTime <= dateto.to_pydatetime()) if dateto else sql
-    #     df = pd.read_sql(sql, con=engine)
-    #     return df
+        sql = sa.select(*table.columns)
+        sql = sql.where(table.c.Symbol.in_(to_list(symbol))) if symbol else sql
+        sql = sql.where(table.c.Timestamp >= datefrom.to_pydatetime()) if datefrom else sql
+        sql = sql.where(table.c.Timestamp <= dateto.to_pydatetime()) if dateto else sql
+        sql = sql.where(table.c.Period.in_(to_list(period))) if period else sql
+        df = pd.read_sql(sql, con=engine)
+        return df
 
     @classmethod
     @validate
@@ -208,16 +215,15 @@ class Pmom:
         vendor: str,
         *,
         symbol: str | Sequence[str],
-        freq: str,
+        period: str | Sequence[str],
         datefrom: DateTimeType | None = None,
         dateto: DateTimeType | None = None,
-        column: str | list[str] = None,
     ) -> pd.DataFrame:
         if vendor == "binance":
-            df = PmomBinance.get(symbol=symbol, freq=freq, datefrom=datefrom, dateto=dateto, column=column)
+            df = PmomBinance.get(symbol=symbol, period=period, datefrom=datefrom, dateto=dateto)
         else:
             raise NotImplementedError(f"{vendor} is not implemented")
         return df
 
 
-__all__ = ["Pmom"]
+__all__ = ["Pmom", "PmomBinance"]
