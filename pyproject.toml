@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools >= 61.0"]
+requires = ["setuptools >= 64", "setuptools_scm >= 8"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "dbmaster"
-version = "0.1.1"
+dynamic = ["version"]
 description = "Personal Quant Research Database Manager"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -56,6 +56,9 @@ binance = ["python-binance>=1.0.19, <2.0"]
 
 [project.scripts]
 dbmaster = "dbmaster.__main__:Main"
+
+[tool.setuptools_scm]
+version_file = "dbmaster/_version.py"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
