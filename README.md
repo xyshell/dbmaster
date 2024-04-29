@@ -7,9 +7,8 @@ Check:
 - [x] how to [Setup](https://github.com/xyshell/dbmaster?tab=readme-ov-file#setup) environment
 - [x] how to run [Hello World](https://github.com/xyshell/dbmaster?tab=readme-ov-file#hello-world) example
 - [x] [Wiki page](https://github.com/xyshell/dbmaster/wiki) on how to add custom datasets
-  - [x] How to [onboard a data vendor](https://github.com/xyshell/dbmaster/wiki/Onboard-a-data-vendor)
-  - [x] How to [Add a catalog](https://github.com/xyshell/dbmaster/wiki/Add-a-catalog)
-  - [x] How to [Add a derived dataset](https://github.com/xyshell/dbmaster/wiki/Add-a-derived-dataset)
+  - [x] How to [onboard a data vendor and catalog](https://github.com/xyshell/dbmaster/wiki/Onboard-a-data-vendor-and-catalog)
+  - [x] How to [compute derived datasets](https://github.com/xyshell/dbmaster/wiki/Compute-derived-datasets)
 
 ## Setup 
 
