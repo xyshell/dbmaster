@@ -2,6 +2,10 @@
 [catalog.kline]
 path = "D:\\kline.db"
 
+# Derived settings
+[derived.pmom]
+path = "D:\\factor.db"
+
 # Vendor settings
 [vendor.binance]
 api_key = "abc123"

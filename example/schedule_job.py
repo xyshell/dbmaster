@@ -18,7 +18,7 @@ def update_kline():
 
     for frq in freq:
         print(f"Running job for freq={frq}, symbol={symbol}")
-        cmd = f'python -m dbmaster update kline --vendor=binance --freq={frq} --{datefrom=} --symbol="{symbol}" --if_row_exists=insert'
+        cmd = f'python -m dbmaster update kline --vendor=binance --freq={frq} --datefrom="{datefrom}" --symbol="{symbol}" --if_row_exists=insert'
         if frq == "1m":
             cmd = "$ENV:DBMASTER_MAX_WORKERS=1; " + cmd
         os.system(cmd)
@@ -32,11 +32,11 @@ def compute_pmom():
     datefrom = dt.datetime.now() - dt.timedelta(days=2)
     datefrom = datefrom.strftime("%Y-%m-%d %H:%M:%S")
     step = "5m"
-    symbol = ["BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT", "DOGEUSDT", "ADAUSDT", "SHIBUSDT", "AVAXUSDT", "DOTUSDT"]  # fmt: skip
-    period = ["-30d", "-14d", "-7d", "-3d", "-1d", "-12h", "-8h", "-4h", "-1h", "-30m", "-15m", "-5m", "+1d"]
+    symbol = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'XRPUSDT', 'DOGEUSDT', 'ADAUSDT', 'SHIBUSDT', 'AVAXUSDT', 'DOTUSDT']  # fmt: skip
+    period = ['-30d', '-14d', '-7d', '-3d', '-1d', '-12h', '-8h', '-4h', '-1h', '-30m', '-15m', '-5m', '+1d']  # fmt: skip
     print(f"Running job for {period=}, symbol={symbol}")
 
-    cmd = f'python -m dbmaster compute pmom --vendor=binance --period="{period}" --{step=} --{datefrom=} --symbol="{symbol}" --if_row_exists=insert'
+    cmd = f'python -m dbmaster compute pmom --vendor=binance --period="{period}" --{step=} --datefrom="{datefrom}" --symbol="{symbol}" --if_row_exists=insert'
     os.system(cmd)
 
 
